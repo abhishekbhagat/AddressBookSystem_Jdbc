@@ -117,14 +117,23 @@ public class AddressBookContacts {
 		this.email = email;
 	}
 
-	public AddressBookContacts(String firstName, String lastName, int id, String phone, String email, int bookId, Date startDate) {
+	public AddressBookContacts(String firstName, String lastName, int id, String phone, String email, int bookId,
+			Date startDate) {
 		this.id = id;
 		this.addressBookId = bookId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phone = phone;
 		this.email = email;
-		this.startDate=startDate;
+		this.startDate = startDate;
+	}
+
+	public AddressBookContacts(int id, String firstName, String lastName, String email) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
 	}
 
 }

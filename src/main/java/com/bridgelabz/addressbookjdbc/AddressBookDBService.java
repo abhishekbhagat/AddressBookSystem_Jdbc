@@ -95,4 +95,72 @@ public class AddressBookDBService {
 		}
 
 	}
+
+	public boolean addNewContact(String addressBookName, int contact_id, int address_book_id, String first_name,
+			String last_name, String email_id, String phone_number, String typeName, String city, String state,
+			String zip) throws AddressBookServiceException, SQLException {
+		int addedAdress_book, addedAddress, addedContactType, addedContactPerson;
+		Connection connection = null;
+		connection = new DBDemo().getConnection();
+		connection.setAutoCommit(false);
+
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format(
+					"INSERT INTO address_book_system(address_book_id,address_book_name) " + " VALUES('%d','%s')",
+					address_book_id, addressBookName);
+			addedAdress_book = statement.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			connection.rollback();
+			throw new AddressBookServiceException("unable to add new contact",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_ADD_NEW_CONTACT);
+		}
+		try (Statement statement = connection.createStatement()) {
+
+			String sql = String.format(
+					"INSERT INTO contact_person(contact_id,address_book_id,first_name,last_name,email_id,phone_number) "
+							+ " VALUES('%d','%d','%s','%s','%s','%s')",
+					contact_id, address_book_id, first_name, last_name, email_id, phone_number);
+			addedContactPerson = statement.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			connection.rollback();
+			throw new AddressBookServiceException("unable to add new contact",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_ADD_NEW_CONTACT);
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format("INSERT INTO contact_type(contact_id,type_name) " + " VALUES('%d','%s')",
+					contact_id, typeName);
+			addedContactType = statement.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			connection.rollback();
+			throw new AddressBookServiceException("unable to add new contact",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_ADD_NEW_CONTACT);
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format(
+					"INSERT INTO complete_address(contact_id,city,state,zip) " + " VALUES('%d','%s','%s','%s')",
+					contact_id, city, state, zip);
+			addedAddress = statement.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			connection.rollback();
+			throw new AddressBookServiceException("unable to add new contact",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_ADD_NEW_CONTACT);
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+		if (addedAdress_book == 1 && addedAddress == 1 && addedContactType == 1 && addedContactPerson == 1) {
+			return true;
+		} else
+			return false;
+
+	}
 }

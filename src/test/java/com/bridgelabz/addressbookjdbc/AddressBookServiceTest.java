@@ -8,8 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-
+import org.junit.Before;
 import org.junit.Test;
+
+import com.google.gson.Gson;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 public class AddressBookServiceTest {
 
@@ -97,5 +103,53 @@ public class AddressBookServiceTest {
 		System.out.println("Time taken without thread: " + Duration.between(start, end));
 		// addressContacts = addressService.readAddressBookContact(IOService.DB_IO);
 		Assert.assertEquals(3, addressBookService.countEntries());
+	}
+
+	@Before
+	public void setup() {
+		RestAssured.baseURI = "http://localhost";
+		RestAssured.port = 3000;
+	}
+
+	private AddressBookContacts[] getContactList() {
+		Response response = RestAssured.get("/contacts");
+		System.out.println("CONTACT ENTRIES IN JSONServe:\n" + response.asString());
+		AddressBookContacts[] arrayOfEmps = new Gson().fromJson(response.asString(), AddressBookContacts[].class);
+		return arrayOfEmps;
+	}
+
+	public Response addContactToJsonServer(AddressBookContacts addressBookContacts) {
+		String empJson = new Gson().toJson(addressBookContacts);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		request.body(empJson);
+		return request.post("/contacts");
+	}
+
+	/**
+	 * uc22
+	 * 
+	 */
+	@Test
+	public void givenDataINJsonServer_WhenRetrieved_shouldMatchTheCount() {
+		AddressBookContacts[] arrayofContact = getContactList();
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayofContact));
+		long entries = addressBookService.countEntries();
+		Assert.assertEquals(3, entries);
+
+	}
+
+	@Test
+	public void addgivenDataINJsonServer_shouldMatchTheCount() {
+		AddressBookContacts[] arrayofContact = getContactList();
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayofContact));
+		AddressBookContacts addressBookContacts = new AddressBookContacts(3, "naman", "kumar", "adfj@gmail.com");
+		Response response = addContactToJsonServer(addressBookContacts);
+
+		addressBookContacts = new Gson().fromJson(response.asString(), AddressBookContacts.class);
+		addressBookService.addContactToAddressBook(addressBookContacts);
+		long entries = addressBookService.countEntries();
+		Assert.assertEquals(3, entries);
+
 	}
 }

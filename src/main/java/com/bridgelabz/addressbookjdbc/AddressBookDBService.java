@@ -1,6 +1,8 @@
 package com.bridgelabz.addressbookjdbc;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,6 +46,35 @@ public class AddressBookDBService {
 		} catch (SQLException e) {
 			throw new AddressBookServiceException("unable to update data",
 					AddressBookServiceException.ExceptionType.UNABLE_TO_UPDATE_DATA);
+		}
+
+	}
+
+	public List<AddressBookContacts> retrievePersonDataByDateRange(Date startDate, Date endDate)
+			throws AddressBookServiceException {
+		try (Connection connection = new DBDemo().getConnection()) {
+			List<AddressBookContacts> addressBookContactList = new ArrayList<>();
+			String sql = String.format("select * from contact_person where startDate between '%s' and '%s';", startDate, endDate);
+			PreparedStatement statement = connection
+					.prepareStatement(sql);
+		
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				int id = resultSet.getInt("contact_id");
+				int bookId = resultSet.getInt("address_book_id");
+				String firstName = resultSet.getString("first_name");
+				String lastName = resultSet.getString("last_name");
+				String phone = resultSet.getString("phone");
+				String email = resultSet.getString("email");
+				Date date = resultSet.getDate("startDate");
+				addressBookContactList
+						.add(new AddressBookContacts(firstName, lastName, id, phone, email, bookId, date));
+			}
+			return addressBookContactList;
+
+		} catch (SQLException e) {
+			throw new AddressBookServiceException("unable to retrieve data",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_RETRIEVE_DATA_BY_GIVEN_RANGE);
 		}
 
 	}

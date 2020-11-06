@@ -117,4 +117,14 @@ public class AddressBookContacts {
 		this.email = email;
 	}
 
+	public AddressBookContacts(String firstName, String lastName, int id, String phone, String email, int bookId, Date startDate) {
+		this.id = id;
+		this.addressBookId = bookId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phone = phone;
+		this.email = email;
+		this.startDate=startDate;
+	}
+
 }

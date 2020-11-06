@@ -34,4 +34,18 @@ public class AddressBookDBService {
 		}
 		return addressBookContactList;
 	}
+
+	public int updatePhoneNumberOfGivenPersonID(String phoneNumber, int id) throws AddressBookServiceException {
+		String query = String.format("update contact_person set phone_number = '%s' where contact_id = '%d';",
+				phoneNumber, id);
+		try (Connection connection = new DBDemo().getConnection()) {
+			Statement statement = connection.createStatement();
+			return statement.executeUpdate(query);
+		} catch (SQLException e) {
+			throw new AddressBookServiceException("unable to update data",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_UPDATE_DATA);
+		}
+
+	}
+
 }

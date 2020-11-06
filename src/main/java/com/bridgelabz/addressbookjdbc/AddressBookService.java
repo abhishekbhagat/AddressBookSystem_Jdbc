@@ -10,4 +10,13 @@ public class AddressBookService {
 
 		return this.addressBookList = new AddressBookDBService().retrieveDataFromDB();
 	}
+
+	public Boolean updatePhoneNumber(String phoneNumber, int id) {
+		int result = new AddressBookDBService().updatePhoneNumberOfGivenPersonID(phoneNumber, id);
+		if (result == 0)
+			return false;
+		else
+			return true;
+	}
+
 }

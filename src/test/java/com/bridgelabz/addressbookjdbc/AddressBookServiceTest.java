@@ -2,6 +2,9 @@ package com.bridgelabz.addressbookjdbc;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -75,5 +78,24 @@ public class AddressBookServiceTest {
 		boolean result = addressBookDBService.addNewContact("abc", 5, 100, "abhishek", "bhagat", "abds@gmail.com",
 				"72093045", "Friends", "dhanbad", "jharkhand", "828113");
 		Assert.assertTrue(result);
+	}
+
+	/**
+	 * uc21
+	 * 
+	 * @throws AddressBookServiceException
+	 */
+	@Test
+	public void givenDatabase_WhenaddedMultipleAddress_ShouldReturnTrue() throws AddressBookServiceException {
+		AddressBookContacts[] arrayOfContact = { new AddressBookContacts(1, "naman", "kumar", "adfj@gmail.com"),
+				new AddressBookContacts(2, "abhisehk", "kumar", "adfj@gmail.com"),
+				new AddressBookContacts(3, "gaurav", "kumar", "adfj@gmail.com") };
+		Instant start = Instant.now();
+		AddressBookService addressBookService = new AddressBookService();
+		addressBookService.addContactToAddressBookSystemWithThread(Arrays.asList(arrayOfContact));
+		Instant end = Instant.now();
+		System.out.println("Time taken without thread: " + Duration.between(start, end));
+		// addressContacts = addressService.readAddressBookContact(IOService.DB_IO);
+		Assert.assertEquals(3, addressBookService.countEntries());
 	}
 }

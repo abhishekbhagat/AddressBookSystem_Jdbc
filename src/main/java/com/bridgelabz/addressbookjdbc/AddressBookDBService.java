@@ -54,10 +54,10 @@ public class AddressBookDBService {
 			throws AddressBookServiceException {
 		try (Connection connection = new DBDemo().getConnection()) {
 			List<AddressBookContacts> addressBookContactList = new ArrayList<>();
-			String sql = String.format("select * from contact_person where startDate between '%s' and '%s';", startDate, endDate);
-			PreparedStatement statement = connection
-					.prepareStatement(sql);
-		
+			String sql = String.format("select * from contact_person where startDate between '%s' and '%s';", startDate,
+					endDate);
+			PreparedStatement statement = connection.prepareStatement(sql);
+
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				int id = resultSet.getInt("contact_id");
@@ -79,4 +79,20 @@ public class AddressBookDBService {
 
 	}
 
+	public int getCountByCity(String city) throws AddressBookServiceException {
+		try (Connection connection = new DBDemo().getConnection()) {
+			int count = 0;
+			String sql = String.format("select count(contact_id) from complete_address where city='%s';", city);
+			PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				count = resultSet.getInt(1);
+			}
+			return count;
+		} catch (SQLException e) {
+			throw new AddressBookServiceException("unable to count",
+					AddressBookServiceException.ExceptionType.UNABLE_TO_COUNT_PERSONS_OF_GIVEN_CITY);
+		}
+
+	}
 }

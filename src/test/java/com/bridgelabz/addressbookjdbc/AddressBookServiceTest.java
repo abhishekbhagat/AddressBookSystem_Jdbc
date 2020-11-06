@@ -30,4 +30,11 @@ public class AddressBookServiceTest {
 		List<AddressBookContacts> addressBookContactList = addressBookService.readDataByDateRange(startDate,endDate);
         assertEquals(3, addressBookContactList.size());
 	}
+	@Test
+	public void givenDatabase_WhenCountContactInGivenCity_ShouldMatchCount()
+			throws AddressBookServiceException {
+		AddressBookService addressBookService = new AddressBookService();
+	    int NoOFContact= addressBookService.countByCity("dhanbad");
+        assertEquals(3,NoOFContact);
+	}
 }

@@ -19,8 +19,14 @@ public class AddressBookService {
 		else
 			return true;
 	}
-	public List<AddressBookContacts> readDataByDateRange(Date startDate, Date endDate) throws AddressBookServiceException {
+
+	public List<AddressBookContacts> readDataByDateRange(Date startDate, Date endDate)
+			throws AddressBookServiceException {
 		return this.addressBookList = new AddressBookDBService().retrievePersonDataByDateRange(startDate, endDate);
+	}
+
+	public int countByCity(String city) throws AddressBookServiceException {
+		return new AddressBookDBService().getCountByCity(city);
 	}
 
 }
